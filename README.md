@@ -242,20 +242,20 @@ typing in the search field as well.
     ![cloud9-fresh](readme-images/cloud9-fresh.png)
     
 1. You need to clone the git repository this README is in into the cloud 9 instance to do that type
- `git clone https://github.com/tozny/cloud9-integration-work.git`into the terminal at the bottom
+ `git clone https://github.com/tozny/tozstore-cloud9-integration.git`into the terminal at the bottom
     ![terminal](readme-images/terminal.png)
  
-1. There will now be a new folder on the left hand side called `cloud9-integration-work`
+1. There will now be a new folder on the left hand side called `tozstore-cloud9-integration`
 
-1. type `cd cloud9-integration-work`
+1. type `cd tozstore-cloud9-integration`
 
 1. Now there is some configuration that needs to be done
-    1. In the `cloud9-integration-work` directory is  a file called `flyway.conf`, there are two fields in this file that
+    1. In the `tozstore-cloud9-integration` directory is  a file called `flyway.conf`, there are two fields in this file that
     need to be updated
         1. The DB endpoint recorded in a previous section replaces `<DB_HOST_HERE>`
         1. The DB password entered during stack creation replaces `<DB PASSWORD HERE>`
         1. Save file
-    1. If you open the directory `ta2resources`, inside `cloud9-integration-work` there is a file called `config.json`.
+    1. If you open the directory `ta2resources`, inside `tozstore-cloud9-integration` there is a file called `config.json`.
     Double click it and it will open in the editor. There are 4 fields that need to be filled in. 
         1. Your Tozstore client credentials, There needs to be a one set of brackets around the keys.
         1. The S3 Bucket name recorded in a previous section replaces `<BUCKET NAME HERE>`
@@ -268,7 +268,7 @@ typing in the search field as well.
         1. Select the dropdown that says `Python 2` and select `Python 3`. You may close the preferences tab
             ![preferences](readme-images/preferences.png)
 1. A few tools need to be installed.
-    1. type `cd ~/environment/cloud9-integration-work`
+    1. type `cd ~/environment/tozstore-cloud9-integration`
     1. type `make setup`
         1. There may be a few time where it pauses and asks if you are sure you want to install the files. type `Y` and then
         press return
@@ -280,7 +280,7 @@ If the environment is closed for an extended period of time (by default configur
 all this means is that the next time you launch the instance it will take a little while longer. But it will come back just the way you left it
 
 1. Open up the Cloud9 Instance
-1. Type `cd ~/environment/cloud9-integration-work`
+1. Type `cd ~/environment/tozstore-cloud9-integration`
 1. On the left tray open `cloud9-integrationwork/ta2resources/working-script.py`
 1. For the simplest implementation with `working-script.py` all you need to do is click the `Run` button at the top of the interface.
 This will download the first 50 records that the client has permissions to read with the specified record type. 
