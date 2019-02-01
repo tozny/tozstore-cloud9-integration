@@ -1,0 +1,241 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for setting up a TozStore AWS cloud9 environment",
+  "Resources": {
+    "S3Bucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        }
+      }
+    },
+    "Ta2DB": {
+      "Type": "AWS::RDS::DBInstance",
+      "Properties": {
+        "AllocatedStorage": {"Ref": "RDSAllocatedStorage"},
+        "BackupRetentionPeriod": "7",
+        "DBInstanceClass": {"Ref": "RDSInstanceSize"},
+        "DBName": "ta2db",
+        "Engine": "postgres",
+        "EngineVersion": "10.4",
+        "MasterUsername": "ta2_user",
+        "MasterUserPassword": {
+          "Ref": "DBPassword"
+        },
+        "Port": "5432",
+        "PubliclyAccessible": false,
+        "StorageType": "gp2",
+        "VPCSecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "Cloud9SecurityGroup",
+              "GroupId"
+            ]
+          }
+        ],
+        "DBSubnetGroupName": {
+          "Ref": "ta2dbSubnetGroup"
+        }
+      }
+    },
+    "ta2dbSubnetGroup": {
+      "Type": "AWS::RDS::DBSubnetGroup",
+      "Properties": {
+        "DBSubnetGroupDescription": "Subnet Group for the RDS in the ta2 environment",
+        "DBSubnetGroupName": "ta2.Subnet.DB.Group",
+        "SubnetIds": [
+          {
+            "Ref": "ta2Subnet"
+          },
+          {
+            "Ref": "ta2Subnet2"
+          }
+        ]
+      }
+    },
+    "Ta2Cloud9": {
+      "Type": "AWS::Cloud9::EnvironmentEC2",
+      "Properties": {
+        "Description": "A Cloud9 intance to be used with TozStore for online dataprocessing",
+        "AutomaticStopTimeMinutes": {"Ref": "Cloud9AutomaticStopTime"},
+        "InstanceType": {"Ref": "Cloud9InstanceSize"},
+        "Name": "TA2 Cloud9 Instance",
+        "SubnetId": {
+          "Ref": "ta2Subnet"
+        }
+      }
+    },
+    "Cloud9SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupName": "cloud9_rds_security_group",
+        "GroupDescription": "Allows cloud9 talk to RDS",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "-1",
+            "FromPort": -1,
+            "ToPort": -1,
+            "CidrIp": "10.0.1.0/24"
+          }
+        ],
+        "VpcId": {
+          "Ref": "ta2Vpc"
+        }
+      }
+    },
+    "ta2Vpc": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "ta2-vpc"
+          }
+        ]
+      }
+    },
+    "ta2Subnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.1.0/24",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            "0",
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "ta2Vpc"
+        }
+      }
+    },
+    "ta2Subnet2": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "CidrBlock": "10.0.2.0/24",
+        "AvailabilityZone": {
+          "Fn::Select": [
+            "1",
+            {
+              "Fn::GetAZs": ""
+            }
+          ]
+        },
+        "VpcId": {
+          "Ref": "ta2Vpc"
+        }
+      }
+    },
+    "ta2InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway"
+    },
+    "ta2InternetGatewayAttachement": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "InternetGatewayId": {
+          "Ref": "ta2InternetGateway"
+        },
+        "VpcId": {
+          "Ref": "ta2Vpc"
+        }
+      }
+    },
+    "ta2PublicRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": {
+          "Ref": "ta2Vpc"
+        }
+      }
+    },
+    "ta2PublicRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "ta2InternetGatewayAttachement",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "ta2PublicRouteTable"
+        },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": {
+          "Ref": "ta2InternetGateway"
+        }
+      }
+    },
+    "ta2PublicSubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "RouteTableId": {
+          "Ref": "ta2PublicRouteTable"
+        },
+        "SubnetId": {
+          "Ref": "ta2Subnet"
+        }
+      }
+    }
+  },
+  "Parameters": {
+    "DBPassword": {
+      "NoEcho": "true",
+      "Description": "The database admin account password, must be 9-60 characters",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "60",
+      "AllowedPattern": "^[a-zA-Z0-9]*$"
+    },
+    "Cloud9InstanceSize": {
+      "Type": "String",
+      "Default": "t2.micro",
+      "Description": "Enter instance size. Default is t2.micro."
+    },
+    "RDSInstanceSize": {
+      "Type": "String",
+      "Default": "db.t2.micro",
+      "Description": "Enter DB instance size. Default is t2.micro."
+    },
+    "RDSAllocatedStorage": {
+      "Type": "Number",
+      "Description": "Gigabytes of storage, minimum is 20",
+      "Default": 20,
+      "MinValue": 20
+    },
+    "Cloud9AutomaticStopTime": {
+      "Type": "Number",
+      "Description": "Number of minutes before auto sleeping the cloud9 instance. Default is 30",
+      "Default": 30,
+      "MinValue":30
+    }
+  },
+  "Outputs": {
+    "S3Bucket": {
+      "Description": "S3 Bucket Name",
+      "Value": {
+        "Ref": "S3Bucket"
+      }
+    },
+    "Ta2DB": {
+      "Description": "Database Host",
+      "Value": {
+        "Fn::GetAtt": [
+          "Ta2DB",
+          "Endpoint.Address"
+        ]
+      }
+    }
+  }
+}

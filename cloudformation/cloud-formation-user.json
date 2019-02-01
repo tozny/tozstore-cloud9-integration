@@ -1,0 +1,51 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Template for creating a new AWS user with full Access",
+  "Resources": {
+    "NewUser": {
+      "Type": "AWS::IAM::User",
+      "Properties": {
+        "LoginProfile": {
+          "Password": {
+            "Ref": "UserPassword"
+          },
+          "PasswordResetRequired": false
+        },
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "*",
+                  "Resource": "*"
+                }
+              ]
+            },
+            "PolicyName": "AdministratorAccess"
+          }
+        ],
+        "UserName": {
+          "Ref": "UserName"
+        }
+      }
+    }
+  },
+  "Parameters": {
+    "UserPassword": {
+      "NoEcho": "true",
+      "Description": "The user password, this user will have full administrative access to the AWS account and can incur charges, please use a strong password",
+      "Type": "String",
+      "MinLength": "8",
+      "MaxLength": "150"
+    },
+    "UserName": {
+      "Description": "The Username",
+      "Type": "String",
+      "MinLength": "3",
+      "MaxLength": "41",
+      "AllowedPattern": "^[a-zA-Z0-9_+=,.@-]*$"
+    }
+  }
+}

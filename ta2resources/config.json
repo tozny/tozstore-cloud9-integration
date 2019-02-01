@@ -1,0 +1,9 @@
+{
+  "CLIENT": {<Paste Your Client Here>},
+  "S3": "<BUCKET NAME HERE>",
+  "DB_HOST": "<DB_HOST_HERE>",
+  "DB_NAME": "ta2db",
+  "DB_USER": "ta2_user",
+  "DB_PASSWORD": "<DB PASSWORD HERE>",
+  "DOWNLOAD_THREADS": 10
+}
