@@ -9,7 +9,7 @@ def run():
     # DO NOT SHARE THIS WORKSPACE WITH OTHERS IF YOUR CONFIG IS PRESENT
     # DO NOT ADD YOUR CONFIG INTO SOURCE CONTROL
 
-    support = ClientSupport.from_config("/home/ec2-user/environment/cloud9-integration-work/ta2resources/config.json")
+    support = ClientSupport.from_config("/home/ec2-user/environment/tozstore-cloud9-integration/ta2resources/config.json")
 
     # Construct search query here (The sample query retrieves all records your client can read with the replaced record type)
     # For full examples on the search query see https://github.com/tozny/e3db-python

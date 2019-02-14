@@ -52,7 +52,7 @@ class ClientSupport(object):
         if records is None:
             records = []
         response = self.client.search(query)
-        after = response.after_index
+        after = response.next_token
         records.extend(response.records)
         if after:
             if all_results is False:
@@ -62,17 +62,17 @@ class ClientSupport(object):
                                     'To retrieve all batches before storing (this can cause very long load times) '
                                     'type: "all"\n'
                                     'To store all retrieved batches type: "store" (or any other response)\n'
-                                    'Current after index is {after_index}\n').format(after_index=after,
+                                    'Current after index is {next_token}\n').format(next_token=after,
                                                                                      record_count=len(records)))
                 if user_input.lower() == "next":
                     print("get next")
-                    query.after_index = after
+                    query.next_token = after
                     self.search(query, records=records, previous_after=after, all_results=False)
                 elif user_input.lower() == "all":
-                    query.after_index = after
+                    query.next_token = after
                     self.search(query, records=records, previous_after=after, all_results=True)
             else:
-                query.after_index = after
+                query.next_token = after
                 self.search(query, records=records, previous_after=after, all_results=True)
                 print("get all")
         return records
