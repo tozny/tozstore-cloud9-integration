@@ -195,9 +195,7 @@
       "Description": "The database admin account password, must be 9-60 characters",
       "Type": "String",
       "MinLength": "8",
-      "MaxLength": "60",
-      "AllowedPattern": "^[a-zA-Z0-9]*$"
-    },
+      "MaxLength": "60"},
     "Cloud9InstanceSize": {
       "Type": "String",
       "Default": "t2.micro",
