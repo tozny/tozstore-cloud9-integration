@@ -1,4 +1,3 @@
-compliance_message = '''If you do illegal things you will go to jail, don't do illegal things
+compliance_message = '''Data accessed from this system contains CONTROLLED UNCLASSIFIED INFORMATION (CUI)
 
-IF YOU ACCEPT THESE TERMS PLEASE TYPE "YES"
-'''
+Please contact the system Authorizer (bbracken@cra.com) if you have any questions.'''
