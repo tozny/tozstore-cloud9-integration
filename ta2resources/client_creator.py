@@ -110,6 +110,8 @@ class ClientSupport(object):
 
     def store_record(self, query: Search, record: Record, conn):
         record_id = record.meta.record_id
+        file_name = record.meta.plain.get("original_file_name", ".txt")
+        
         if not is_file_record(record):
             # This means that the record is not a file and therefore should not be included
             print("Not fetching, record {} it is not a file record and is not supported at this time".format(record_id))
@@ -125,7 +127,7 @@ class ClientSupport(object):
         if not exists or not local_s3:
             temp_file = "{}-temp".format(record_id)
             self.client.read_file(record_id, temp_file)
-            object_location = "{}-s3".format(record_id)
+            object_location = "s3-{0}-{1}".format(record_id, file_name)
             self.bucket.upload_file(temp_file, object_location)
             remove(temp_file)
             bucket_name = self.bucket_name
