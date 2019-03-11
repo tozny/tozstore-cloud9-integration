@@ -331,6 +331,9 @@ Metadata for the files in the s3 bucket, can be found in the RDS instance that w
 
 `psql -h <DB_HOST_HERE> -U ta2_user -d ta2db` you will be prompted for the db password, paste it in and press return.
 
+*Note that as configured the database can only be accessed from the cloud9 instance, it is not publicly accessible from 
+a local machine or from other subnets within AWS. This is for security reasons.*
+
 The database schema can be found [here](migrations/V1__record_storage.sql). Don't forget that the user you are logging in with
 has full read, write permissions, so be careful not to delete any data if you are not precisely sure of the outcome.
 
