@@ -312,7 +312,7 @@ records and total size to be downloaded. Follow the onscreen prompts to complete
 ### Advanced searching
 
 The search system is backed by an elastic search like system, that can run a very broad type of search queries. For full
- class documentation see [here](https://github.com/tozny/e3db-python/blob/master/e3db/types/search.py#L253) and for some
+ class documentation see [here](https://github.com/tozny/e3db-python/blob/master/e3db/types/search.py#L278) and for some
  simple examples see [here](https://github.com/tozny/e3db-python/blob/master/README.md)
 
 
