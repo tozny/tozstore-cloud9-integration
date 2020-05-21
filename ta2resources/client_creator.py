@@ -20,7 +20,7 @@ class ClientSupport(object):
                            aws_secret_access_key=None)
         self.bucket_name = s3_bucket
         self.bucket = self.s3.Bucket(self.bucket_name)
-        self.host = db_host;
+        self.host = db_host
         self.db_user = db_user
         self.db_name = db_name
         self.db_password = db_password

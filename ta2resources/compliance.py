@@ -1,4 +1,4 @@
-# MAKE A NOTE HERE THAT BY MODIFYING THIS FILE TO NOT DISPLAY THE WANRING YOU MAY BE BREAKING THE LAW
+# BY MODIFYING THIS FILE TO NOT DISPLAY THE WARNING YOU MAY BE BREAKING THE LAW
 
 import os
 import time
@@ -46,4 +46,3 @@ def do_compliance_check():
         r.write(str(time.time()))
     print("Thank you for verifying")
     return True
-
