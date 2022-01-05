@@ -261,53 +261,14 @@ typing in the search field as well.
 
 1. type `cd tozstore-cloud9-integration`.
 
-1. Now there is some configuration that needs to be done.
-    1. In the `tozstore-cloud9-integration` directory is  a file called `flyway.conf`, there are two fields in this file that
-    need to be updated.
-        1. The DB endpoint recorded in a previous section replaces `<DB_HOST_HERE>`.
-        1. The DB password entered during stack creation replaces `<DB PASSWORD HERE>`.
-        1. Save file.
-        
-        ![flyway-conf](readme-images/flyway-conf.png)
-        
-    1. If you open the directory `ta2resources`, inside `tozstore-cloud9-integration` there is a file called `config.json`.
-    Double click it and it will open in the editor. There are 4 fields that need to be filled in.
-        1. Your Tozstore client credentials, There needs to be a one set of brackets around the keys.
-        1. The S3 Bucket name recorded in a previous section replaces `<BUCKET NAME HERE>`.
-        1. The DB endpoint recorded in a previous section replaces `<DB_HOST_HERE>`.
-        1. The DB password entered during stack creation replaces `<DB PASSWORD HERE>`.
-        1. Save file
-        
-        ![config-json](readme-images/config-json.png)
-        
-    1. The Default Python interpreter must be updated to Python3.
-        1. Select the `AWS Cloud9` and click `Preferences`.
-        1. Click on `Python Support`.
-        1. Select the dropdown that says `Python 2` and select `Python 3`. You may close the preferences tab.
-            ![preferences](readme-images/preferences.png)
-1. A few tools need to be installed.
-    1. type `cd ~/environment/tozstore-cloud9-integration`.
-    1. type `make setup`.
-        1. There may be a few time where it pauses and asks if you are sure you want to install the files. type `Y` and then
-        press return.
+1. Now you will need to download the Wash Helper Folder, Found in the [WASH Portal](https://wash.fedramp.tozny.com/) under the Support Page.
 
+1. Once you have Downloaded the File locally, you can drag and drop into your Cloud9 instance or use File > Upload Local Files. For further details on how to run the script, look at the ReadMe.md found in the Wash Helper Folder. 
 ## Downloading data
 
 This environment is now all setup and ready to go.  You can close the Cloud9 instance and reopen it by clicking `launch ide`.
 If the environment is closed for an extended period of time (by default configured to 30 minutes) the instance will shut down,
 all this means is that the next time you launch the instance it will take a little while longer. But it will come back just the way you left it.
-
-**Don't forget you will need to have large file records in TozStore to be able to download them**
-
-1. Open up the Cloud9 Instance.
-1. Type `cd ~/environment/tozstore-cloud9-integration`.
-1. On the left tray open `cloud9-integrationwork/ta2resources/working-script.py`.
-1. For the simplest implementation with `working-script.py` all you need to do is click the `Run` button at the top of the interface.
-This will download the first 50 records that the client has permissions to read with the specified record type.
-If there are more than 50 records it will prompt to see if more files should be collected. Once all files fitting the
-search have been collected the display will prompt if you want to download this will also list the total number of
-records and total size to be downloaded. Follow the onscreen prompts to complete the download.
-1. Once completed the files will be stored in your S3 Bucket and metadata related to the the files can be found in the Postgres Database.
 
 ### Advanced searching
 
@@ -315,27 +276,3 @@ The search system is backed by an elastic search like system, that can run a ver
  class documentation see [here](https://github.com/tozny/e3db-python/blob/master/e3db/types/search.py#L278) and for some
  simple examples see [here](https://github.com/tozny/e3db-python/blob/master/README.md)
 
-
-#### Search Examples
-    
-Todo
-
-### Post-download Processing
-
-The S3 bucket holds all of the downloaded files. You can access the bucket in the console by opening the `Services` drop
-down and searching for `S3`, it can also be found under the `Storage` section. On that page will be a bucket with the
-name recorded from the outputs. By clicking in you can see all of the objects listed.
-
-Metadata for the files in the s3 bucket, can be found in the RDS instance that was created. It can be accessed using the
-[PSQL](http://postgresguide.com/utilities/psql.html) tool. It can be started with the command
-
-`psql -h <DB_HOST_HERE> -U ta2_user -d ta2db` you will be prompted for the db password, paste it in and press return.
-
-*Note that as configured the database can only be accessed from the cloud9 instance, it is not publicly accessible from 
-a local machine or from other subnets within AWS. This is for security reasons.*
-
-The database schema can be found [here](migrations/V1__record_storage.sql). Don't forget that the user you are logging in with
-has full read, write permissions, so be careful not to delete any data if you are not precisely sure of the outcome.
-
-The [Flyway command line tool](https://flywaydb.org/) was used to do the migrations, and can be used again if more migrations
-are desired.
