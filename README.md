@@ -181,7 +181,7 @@ not take more than a minute or two. If you refresh the page it will change to `C
  completed that and AWS is now yours to explore! The next sections will setup an infrastructure that can download and
  store large files from TozStore for cloud native secure data processing.
  
- ## Creating an S3, RDS, Cloud9 Stack using CloudFormation
+ ## Creating an S3 and Cloud9 Stack using CloudFormation
  
 We are going to once again use cloud formation to create this stack.
 
@@ -198,19 +198,16 @@ select in the affirmative and it should match the screenshots**
     ![create-stack-resource](readme-images/create-stack-resource.png)
 1. Under Specify Template, `Template source` select `Amazon S3 URL`, and paste in
 
-    `https://s3.us-west-2.amazonaws.com/tozny-fedramp-cloudformation/v1/cloud-formation-resources.json`
+    `https://s3.us-west-2.amazonaws.com/tozny-fedramp-cloudformation/v2/cloud-formation-resources.json`
     
     and click `Next`. **Most of the `Next` buttons in the stack creator requires two clicks to work**
     
     ![specify-template](readme-images/specify-template.png)
 
-1. On the next page fill in a stack name, the example images use `tozstore-cloud9`. The only other value that must be set is
-`DBPassword` this is to set the master password for Postgres database that will be created. As always this should be a strong password.
-This password is not easy to recover and should be stored in a safe place, like a password manager.
+1. On the next page fill in a stack name, the example images use `tozstore-cloud9`. 
 
     The other fields can be left as is. If the default parameters do not suit your needs, other options for cloud9 are
-    [here](https://aws.amazon.com/ec2/instance-types/) and other RDS options are [here](https://aws.amazon.com/rds/instance-types/).
-    *Note: Other options may not fall in the free tier and some options are very expensive*
+    [here](https://aws.amazon.com/ec2/instance-types/) *Note: Other options may not fall in the free tier and some options are very expensive*
     
     ![resource-parameters](readme-images/stack-details.png)
     
@@ -221,7 +218,7 @@ This password is not easy to recover and should be stored in a safe place, like 
     ![stack-recording](readme-images/create-stack-recording.gif)
 1. This will bring you to the events page for the stack. The building of this stack will take 10-30 minutes.
 1. After some time on the main CloudFormation page you should see a list of two new stacks
-(if following this tutorial on a new AWS account, there should be three total stacks). The stack you named in a previous step and
+(if following this tutorial on a new AWS account, there should be two total stacks). The stack you named in a previous step and
 an `aws-cloud9...` stack, this is a sub stack that was created by the main stack.
     
     ![completed-stacks](readme-images/complete-stacks.png)
@@ -235,7 +232,7 @@ The infrastructure is now setup, all that is left is bootstrapping and configura
 
     ![outputs-tab](readme-images/outputs-tab.png)
     
-1. On the output page there should be two rows with keys, `S3Bucket` and `Ta2DB`. Record both of the values, for the next step.
+1. On the output page there should be one row with the key, `S3Bucket`. Record the value, for the next step.
     
     ![output-values](readme-images/needed-values.png)
 
@@ -252,18 +249,45 @@ typing in the search field as well.
 
     ![cloud9-fresh](readme-images/cloud9-fresh.png)
     
+
 1. You need to clone the git repository this README is in, into the cloud 9 instance. To do that type
- `git clone https://github.com/tozny/tozstore-cloud9-integration.git`into the terminal at the bottom.
+ `git clone https://github.com/tozny/tozstore-cloud9-integration.git` into the terminal at the bottom.
  
     ![terminal](readme-images/terminal.png)
  
 1. There will now be a new folder on the left hand side called `tozstore-cloud9-integration`.
 
-1. type `cd tozstore-cloud9-integration`.
+1. type `cd tozstore-cloud9-integration`. You will now be in the `tozstore-cloud9-integration` folder.
+
+1. Install the `AWS CLI`. This tool will allow you to upload files from cloud9 to the s3 bucket you created, in a previous step.  Type `make aws`. There will be many lines of output. When complete if you type `aws` you should see 
+
+    ```
+        usage: aws [options] <command> <subcommand> [<subcommand> ...] [parameters]
+        To see help text, you can run:
+
+        aws help
+        aws <command> help
+        aws <command> <subcommand> help
+
+        aws: error: the following arguments are required: command
+    ```
 
 1. Now you will need to download the Wash Helper Folder, Found in the [WASH Portal](https://wash.fedramp.tozny.com/) under the Support Page.
 
 1. Once you have Downloaded the File locally, you can drag and drop into your Cloud9 instance or use File > Upload Local Files. For further details on how to run the script, look at the ReadMe.md found in the Wash Helper Folder. 
+
+1. Using the WASH helper scripts you may download any files that you need. Those files will be placed into a directory called `downloads`, if the above instructions were followed exactly it will likely be at `~/environment/wash-helpers-0.6/downloads`. 
+
+1. The cloud9 instance has a limited amount of hard drive space, in addition this hard drive is not easily accessible to download data from at a later date. To solve these two issues, we will move downloaded data from cloud9 to the S3 bucket that was created. After it has been transferred we will remove the local downloads, to free up space for more data to be downloaded
+
+1. Navigate to the downloads folder `cd ~/environment/wash-helpers-0.6/downloads`
+
+1. Transfer the directory to S3 `aws s3 cp --recursive ./ s3://<BUCKET-NAME-FROM-OUTPUT>/wash-data` the previous command uses the AWS CLI S3 tool to copy, recursively, the current directory to your S3 bucket in the `wash-data` directory.
+
+1. In the AWS console you can navigate to the S3 resource and see the bucket that you have created. Clicking into it you will see all of the files that have been transferred to it.
+
+1. Once transferred, the files can be removed from the cloud9 local disk. To accomplish this, in the file viewer find the `downloads` directory. Right click it and select `delete`. Click `yes` on the confirmation box. The wash helper scripts track all downloaded files so even if they have been deleted locally they will not be downloaded again.
+
 ## Downloading data
 
 This environment is now all setup and ready to go.  You can close the Cloud9 instance and reopen it by clicking `launch ide`.

@@ -22,50 +22,6 @@
         }
       }
     },
-    "Ta2DB": {
-      "Type": "AWS::RDS::DBInstance",
-      "Properties": {
-        "AllocatedStorage": {"Ref": "RDSAllocatedStorage"},
-        "BackupRetentionPeriod": "7",
-        "DBInstanceClass": {"Ref": "RDSInstanceSize"},
-        "DBName": "ta2db",
-        "Engine": "postgres",
-        "EngineVersion": "10.4",
-        "MasterUsername": "ta2_user",
-        "MasterUserPassword": {
-          "Ref": "DBPassword"
-        },
-        "Port": "5432",
-        "PubliclyAccessible": false,
-        "StorageType": "gp2",
-        "VPCSecurityGroups": [
-          {
-            "Fn::GetAtt": [
-              "Cloud9SecurityGroup",
-              "GroupId"
-            ]
-          }
-        ],
-        "DBSubnetGroupName": {
-          "Ref": "ta2dbSubnetGroup"
-        }
-      }
-    },
-    "ta2dbSubnetGroup": {
-      "Type": "AWS::RDS::DBSubnetGroup",
-      "Properties": {
-        "DBSubnetGroupDescription": "Subnet Group for the RDS in the ta2 environment",
-        "DBSubnetGroupName": "ta2.Subnet.DB.Group",
-        "SubnetIds": [
-          {
-            "Ref": "ta2Subnet"
-          },
-          {
-            "Ref": "ta2Subnet2"
-          }
-        ]
-      }
-    },
     "Ta2Cloud9": {
       "Type": "AWS::Cloud9::EnvironmentEC2",
       "Properties": {
@@ -190,27 +146,10 @@
     }
   },
   "Parameters": {
-    "DBPassword": {
-      "NoEcho": "true",
-      "Description": "The database admin account password, must be 9-60 characters",
-      "Type": "String",
-      "MinLength": "8",
-      "MaxLength": "60"},
     "Cloud9InstanceSize": {
       "Type": "String",
       "Default": "t2.micro",
       "Description": "Enter instance size. Default is t2.micro."
-    },
-    "RDSInstanceSize": {
-      "Type": "String",
-      "Default": "db.t2.micro",
-      "Description": "Enter DB instance size. Default is t2.micro."
-    },
-    "RDSAllocatedStorage": {
-      "Type": "Number",
-      "Description": "Gigabytes of storage, minimum is 20",
-      "Default": 20,
-      "MinValue": 20
     },
     "Cloud9AutomaticStopTime": {
       "Type": "Number",
@@ -224,15 +163,6 @@
       "Description": "S3 Bucket Name",
       "Value": {
         "Ref": "S3Bucket"
-      }
-    },
-    "Ta2DB": {
-      "Description": "Database Host",
-      "Value": {
-        "Fn::GetAtt": [
-          "Ta2DB",
-          "Endpoint.Address"
-        ]
       }
     }
   }
